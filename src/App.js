@@ -6,12 +6,19 @@ import Header from './components/header';
 import { Home, NotFound, Cart } from './pages/index';
 
 import { createContext } from 'react';
+import { useState } from 'react';
 
 export const AppContext = createContext({});
 
 function App() {
+  const [searchValue, setSearchValue] = useState('');
+
+  const onChangeInput = (e) => {
+    setSearchValue(e.target.value);
+  };
+
   return (
-    <AppContext.Provider value={{}}>
+    <AppContext.Provider value={{ searchValue, setSearchValue, onChangeInput }}>
       <Router>
         <div className="wrapper">
           <Header />
