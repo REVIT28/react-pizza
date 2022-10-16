@@ -1,4 +1,5 @@
 import React from 'react';
+
 import Categories from '../components/categories';
 import Sort from '../components/sort';
 import PizzaBlock from '../components/pizza-block/pizza-block';
@@ -9,13 +10,15 @@ import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { useContext } from 'react';
 import { AppContext } from '../App';
+import { useSelector } from 'react-redux';
 
 const Home = () => {
+  const categoryId = useSelector((state) => state.filterSlice.categoryId);
   //Поиск
   const { searchValue } = useContext(AppContext);
 
   //Категории, сортировка
-  const [categoryId, setCategoryId] = useState(0);
+  // const [categoryId, setCategoryId] = useState(0);
   const [sortType, setSortType] = useState({
     name: 'популярности',
     sort: 'rating',
@@ -26,6 +29,8 @@ const Home = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   const [currentPage, setCurrentPage] = useState(1);
+
+  const setCategoryId = () => {};
 
   async function getResource() {
     setIsLoading(true);
