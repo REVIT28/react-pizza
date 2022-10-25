@@ -33,6 +33,23 @@ body {
   @media (max-width: 830px) {
     text-align: center;
   }
+  &__error-info {
+    width: 450px;
+    margin: 60px auto;
+    text-align: center;
+
+    h2 {
+      margin-top: 100px;
+      font-size: 30px;
+      font-weight: 700;
+    }
+
+    p {
+      margin-top: 30px;
+      font-style: 27px;
+      margin-bottom: 100px;
+    }
+  }
 
   &__title {
     margin: 35px 0;

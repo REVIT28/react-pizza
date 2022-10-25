@@ -6,45 +6,34 @@ import PizzaBlock from '../components/pizza-block/pizza-block';
 import Skeleton from '../components/pizza-block/skeleton';
 import Pagination from '../components/pagination/pagination';
 
-import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { useContext } from 'react';
 import { AppContext } from '../App';
-import { useSelector } from 'react-redux';
+
+import { useSelector, useDispatch } from 'react-redux';
+import { setCategoryId, setSortType } from '../redux/slices/filter-slice';
+import { fetchPizzas } from '../redux/slices/pizza-slice';
 
 const Home = () => {
-  const categoryId = useSelector((state) => state.filterSlice.categoryId);
+  const { categoryId, sortType } = useSelector((state) => state.filter);
+  const { items, status } = useSelector((state) => state.pizza);
+
+  const dispatch = useDispatch();
+
   //Поиск
   const { searchValue } = useContext(AppContext);
 
-  //Категории, сортировка
-  // const [categoryId, setCategoryId] = useState(0);
-  const [sortType, setSortType] = useState({
-    name: 'популярности',
-    sort: 'rating',
-  });
-
   //Скелетон загрузки, и пиццы
-  const [pizzaItem, setPizzaItem] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
 
   const [currentPage, setCurrentPage] = useState(1);
 
-  const setCategoryId = () => {};
-
   async function getResource() {
-    setIsLoading(true);
-
     const order = sortType.sort.includes('-') ? 'desc' : 'asc';
     const sortBy = sortType.sort.replace('-', '');
     const category = categoryId > 0 && `category=${categoryId}`;
     const search = searchValue && `&search=${searchValue}`;
 
-    const itemsResponse = await axios.get(
-      `https://6346771c745bd0dbd37e29ed.mockapi.io/item?page=${currentPage}&limit=4&${category}&sortBy=${sortBy}&order=${order}${search}`,
-    );
-    setPizzaItem(itemsResponse.data);
-    setIsLoading(false);
+    dispatch(fetchPizzas({ order, sortBy, category, search, currentPage }));
   }
 
   useEffect(() => {
@@ -52,22 +41,39 @@ const Home = () => {
     window.scrollTo(0, 0);
   }, [categoryId, sortType, searchValue, currentPage]);
 
+  const onChangeCategory = (id) => {
+    dispatch(setCategoryId(id));
+  };
+
+  const onChangeSort = (id) => {
+    dispatch(setSortType(id));
+  };
+
+  const skeleton = [...Array(4)].map((_, i) => <Skeleton key={i} />);
+  const pizzas = items
+    .filter((obj) => obj.title.toLowerCase().includes(searchValue.toLowerCase()))
+    .map((obj) => <PizzaBlock {...obj} key={obj.id} />);
+
   return (
     <>
       <div className="content__top">
-        <Categories value={categoryId} onClickCategory={(id) => setCategoryId(id)} />
-        <Sort value={sortType} onClickSort={(id) => setSortType(id)} />
+        <Categories value={categoryId} onChangeCategory={onChangeCategory} />
+        <Sort value={sortType} onChangeSort={onChangeSort} />
       </div>
       <h2 className="content__title">
         {searchValue ? `Результаты по запросу: ${searchValue}` : 'Все пиццы'}
       </h2>
-      <div className="content__items">
-        {isLoading
-          ? [...Array(4)].map((_, i) => <Skeleton key={i} />)
-          : pizzaItem
-              .filter((obj) => obj.title.toLowerCase().includes(searchValue.toLowerCase()))
-              .map((obj) => <PizzaBlock {...obj} key={obj.id} />)}
-      </div>
+      {status === 'error' ? (
+        <div className="content__error-info">
+          <h2>
+            Произошла ошибка <icon>😕</icon>
+          </h2>
+          <p>К сожалению, не получилось выполнить запрос. Повторите попытку позже.</p>
+        </div>
+      ) : (
+        <div className="content__items">{status === 'loading' ? skeleton : pizzas}</div>
+      )}
+
       <Pagination pageSelect={(number) => setCurrentPage(number)} />
     </>
   );

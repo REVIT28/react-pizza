@@ -1,29 +1,42 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import React from 'react';
 
-function Sort({ value, onClickSort }) {
+const openSort = [
+  { name: 'популярности (А-Я)', sort: 'rating' },
+  { name: 'популярности (Я-А)', sort: '-rating' },
+  { name: 'цене (А-Я)', sort: 'price' },
+  { name: 'цене (Я-А)', sort: '-price' },
+  { name: 'алфавиту (А-Я)', sort: 'title' },
+  { name: 'алфавиту (Я-А)', sort: '-title' },
+];
+
+function Sort({ value, onChangeSort }) {
+  const sortRef = useRef();
   const [sortOn, setSortOn] = useState(false);
 
-  const openSort = [
-    { name: 'популярности (А-Я)', sort: 'rating' },
-    { name: 'популярности (Я-А)', sort: '-rating' },
-    { name: 'цене (А-Я)', sort: 'price' },
-    { name: 'цене (Я-А)', sort: '-price' },
-    { name: 'алфавиту (А-Я)', sort: 'title' },
-    { name: 'алфавиту (Я-А)', sort: '-title' },
-  ];
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (!e.path.includes(sortRef.current)) {
+        setSortOn(false);
+      }
+    };
+
+    document.body.addEventListener('click', handleClickOutside);
+
+    return () => document.body.removeEventListener('click', handleClickOutside);
+  }, []);
 
   const onSortList = () => {
     setSortOn(!sortOn);
   };
 
   const onClickActive = (index) => {
-    onClickSort(index);
+    onChangeSort(index);
     setSortOn(false);
   };
 
   return (
-    <div className="sort">
+    <div ref={sortRef} className="sort">
       <div className="sort__label">
         <svg
           width="10"

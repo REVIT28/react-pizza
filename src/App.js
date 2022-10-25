@@ -13,12 +13,8 @@ export const AppContext = createContext({});
 function App() {
   const [searchValue, setSearchValue] = useState('');
 
-  const onChangeInput = (e) => {
-    setSearchValue(e.target.value);
-  };
-
   return (
-    <AppContext.Provider value={{ searchValue, setSearchValue, onChangeInput }}>
+    <AppContext.Provider value={{ searchValue, setSearchValue }}>
       <Router>
         <div className="wrapper">
           <Header />
