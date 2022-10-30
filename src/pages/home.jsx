@@ -6,26 +6,27 @@ import PizzaBlock from '../components/pizza-block/pizza-block';
 import Skeleton from '../components/pizza-block/skeleton';
 import Pagination from '../components/pagination/pagination';
 
-import { useState, useEffect } from 'react';
-import { useContext } from 'react';
-import { AppContext } from '../App';
+import { useEffect } from 'react';
 
 import { useSelector, useDispatch } from 'react-redux';
-import { setCategoryId, setSortType } from '../redux/slices/filter-slice';
+import {
+  selectorSort,
+  setCategoryId,
+  setSortType,
+  setCurrentPage,
+} from '../redux/slices/filter-slice';
 import { fetchPizzas } from '../redux/slices/pizza-slice';
 
 const Home = () => {
-  const { categoryId, sortType } = useSelector((state) => state.filter);
+  const { categoryId, sortType, searchValue, currentPage } = useSelector(selectorSort);
+
   const { items, status } = useSelector((state) => state.pizza);
 
   const dispatch = useDispatch();
 
   //Поиск
-  const { searchValue } = useContext(AppContext);
 
   //Скелетон загрузки, и пиццы
-
-  const [currentPage, setCurrentPage] = useState(1);
 
   async function getResource() {
     const order = sortType.sort.includes('-') ? 'desc' : 'asc';
@@ -47,6 +48,10 @@ const Home = () => {
 
   const onChangeSort = (id) => {
     dispatch(setSortType(id));
+  };
+
+  const onChangePage = (number) => {
+    dispatch(setCurrentPage(number));
   };
 
   const skeleton = [...Array(4)].map((_, i) => <Skeleton key={i} />);
@@ -74,7 +79,7 @@ const Home = () => {
         <div className="content__items">{status === 'loading' ? skeleton : pizzas}</div>
       )}
 
-      <Pagination pageSelect={(number) => setCurrentPage(number)} />
+      <Pagination pageSelect={onChangePage} />
     </>
   );
 };

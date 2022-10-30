@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import CartItems from '../components/cart-item';
 import NotFound from './not-found';
-import { addItem, removeItem, minusItem, clearItems } from '../redux/slices/cartSlice';
+import { addItem, removeItem, minusItem, clearItems } from '../redux/slices/cart-slice';
 
 const Cart = () => {
   const { items, totalPrice } = useSelector((state) => state.cart);

@@ -4,14 +4,14 @@ import Search from './search/search';
 import { useSelector } from 'react-redux';
 
 function Header() {
-  const { items, totalPrice } = useSelector((state) => state.cart);
-  const totallCount = items.reduce((sum, item) => sum + item.count, 0);
+  const { items, totalPrice } = useSelector((state: any) => state.cart);
+  const totallCount = items.reduce((sum: number, item: any) => sum + item.count, 0);
   return (
     <div className="header">
       <div className="container">
         <div className="header__logo">
           <img width="38" src="./img/pizza-logo.svg" alt="Pizza logo" />
-          <Link to="/" class="">
+          <Link to="/" className="">
             <div>
               <h1>React Pizza</h1>
               <p>самая вкусная пицца во вселенной</p>
@@ -20,7 +20,7 @@ function Header() {
         </div>
         <Search />
         <div className="header__cart">
-          <Link to="/cart" class="button button--cart">
+          <Link to="/cart" className="button button--cart">
             <span>{totalPrice} ₽</span>
             <div className="button__delimiter"></div>
             <svg

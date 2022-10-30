@@ -1,7 +1,12 @@
 import { useState, useRef, useEffect } from 'react';
 import React from 'react';
 
-const openSort = [
+type openSortItem = {
+  name: string;
+  sort: string;
+};
+
+const openSort: openSortItem[] = [
   { name: 'популярности (А-Я)', sort: 'rating' },
   { name: 'популярности (Я-А)', sort: '-rating' },
   { name: 'цене (А-Я)', sort: 'price' },
@@ -10,12 +15,20 @@ const openSort = [
   { name: 'алфавиту (Я-А)', sort: '-title' },
 ];
 
-function Sort({ value, onChangeSort }) {
-  const sortRef = useRef();
+type SortProps = {
+  value: {
+    name: string;
+    sort: string;
+  };
+  onChangeSort: any;
+};
+
+const Sort: React.FC<SortProps> = ({ value, onChangeSort }) => {
+  const sortRef = useRef<HTMLDivElement>(null);
   const [sortOn, setSortOn] = useState(false);
 
   useEffect(() => {
-    const handleClickOutside = (e) => {
+    const handleClickOutside = (e: any) => {
       if (!e.path.includes(sortRef.current)) {
         setSortOn(false);
       }
@@ -30,8 +43,8 @@ function Sort({ value, onChangeSort }) {
     setSortOn(!sortOn);
   };
 
-  const onClickActive = (index) => {
-    onChangeSort(index);
+  const onClickActive = (obj: openSortItem) => {
+    onChangeSort(obj);
     setSortOn(false);
   };
 
@@ -65,6 +78,6 @@ function Sort({ value, onChangeSort }) {
       )}
     </div>
   );
-}
+};
 
 export default Sort;
