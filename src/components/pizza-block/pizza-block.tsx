@@ -2,7 +2,7 @@ import { useState } from 'react';
 import React from 'react';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { addItem, selectorcartItems } from '../../redux/slices/cart-slice';
+import { addItem, CartItem, selectorcartItems } from '../../redux/slices/cart-slice';
 
 type PizzaBlockProps = {
   id: number;
@@ -25,13 +25,14 @@ const PizzaBlock: React.FC<PizzaBlockProps> = ({ id, imageUrl, title, types, siz
   const addedCount = cartItems ? cartItems.count : 0;
 
   const onClickAdd = () => {
-    const item = {
+    const item: CartItem = {
       id,
       title,
       price,
       imageUrl,
       type: typesName[typesPizza],
       size: sizes[sizePizza],
+      count: 0,
     };
     setAddPizza((addPizza) => addPizza + 1);
     dispatch(addItem(item));

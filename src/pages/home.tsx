@@ -14,13 +14,14 @@ import {
   setCategoryId,
   setSortType,
   setCurrentPage,
-} from '../redux/slices/filter-slice';
-import { fetchPizzas } from '../redux/slices/pizza-slice';
+} from '../redux/slices/filter/selector';
+import { pizzaSelector } from '../redux/slices/pizza/selector';
+import { fetchPizzas } from '../redux/slices/pizza/action';
 
-const Home = () => {
+const Home: React.FC = () => {
   const { categoryId, sortType, searchValue, currentPage } = useSelector(selectorSort);
 
-  const { items, status } = useSelector((state) => state.pizza);
+  const { items, status } = useSelector(pizzaSelector);
 
   const dispatch = useDispatch();
 
@@ -28,36 +29,40 @@ const Home = () => {
 
   //Скелетон загрузки, и пиццы
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   async function getResource() {
     const order = sortType.sort.includes('-') ? 'desc' : 'asc';
     const sortBy = sortType.sort.replace('-', '');
     const category = categoryId > 0 && `category=${categoryId}`;
     const search = searchValue && `&search=${searchValue}`;
 
-    dispatch(fetchPizzas({ order, sortBy, category, search, currentPage }));
+    dispatch(
+      //@ts-ignore
+      fetchPizzas({ order, sortBy, category, search, currentPage }),
+    );
   }
 
   useEffect(() => {
     getResource();
     window.scrollTo(0, 0);
-  }, [categoryId, sortType, searchValue, currentPage]);
+  }, [categoryId, sortType, searchValue, currentPage, getResource]);
 
-  const onChangeCategory = (id) => {
+  const onChangeCategory = (id: number) => {
     dispatch(setCategoryId(id));
   };
 
-  const onChangeSort = (id) => {
+  const onChangeSort = (id: any) => {
     dispatch(setSortType(id));
   };
 
-  const onChangePage = (number) => {
+  const onChangePage = (number: number) => {
     dispatch(setCurrentPage(number));
   };
 
   const skeleton = [...Array(4)].map((_, i) => <Skeleton key={i} />);
   const pizzas = items
-    .filter((obj) => obj.title.toLowerCase().includes(searchValue.toLowerCase()))
-    .map((obj) => <PizzaBlock {...obj} key={obj.id} />);
+    .filter((obj: any) => obj.title.toLowerCase().includes(searchValue.toLowerCase()))
+    .map((obj: any) => <PizzaBlock {...obj} key={obj.id} />);
 
   return (
     <>
@@ -71,7 +76,7 @@ const Home = () => {
       {status === 'error' ? (
         <div className="content__error-info">
           <h2>
-            Произошла ошибка <icon>😕</icon>
+            Произошла ошибка <span>😕</span>
           </h2>
           <p>К сожалению, не получилось выполнить запрос. Повторите попытку позже.</p>
         </div>

@@ -20,7 +20,7 @@ type SortProps = {
     name: string;
     sort: string;
   };
-  onChangeSort: any;
+  onChangeSort: (obj: openSortItem) => void;
 };
 
 const Sort: React.FC<SortProps> = ({ value, onChangeSort }) => {
@@ -28,8 +28,11 @@ const Sort: React.FC<SortProps> = ({ value, onChangeSort }) => {
   const [sortOn, setSortOn] = useState(false);
 
   useEffect(() => {
-    const handleClickOutside = (e: any) => {
-      if (!e.path.includes(sortRef.current)) {
+    const handleClickOutside = (e: MouseEvent) => {
+      const _e = e as MouseEvent & {
+        path: Node[];
+      };
+      if (sortRef.current && !_e.path.includes(sortRef.current)) {
         setSortOn(false);
       }
     };
@@ -68,7 +71,7 @@ const Sort: React.FC<SortProps> = ({ value, onChangeSort }) => {
               <li
                 key={i}
                 onClick={() => onClickActive(obj)}
-                className={value.sort === obj.sort && 'active'}
+                className={value.sort === obj.sort ? 'active' : ''}
               >
                 {obj.name}
               </li>
